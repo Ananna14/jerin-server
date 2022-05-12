@@ -18,9 +18,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
       await client.connect();
-      const database = client.db('jerin_parlor')
-      const addServiceCollection = database.collection('services')
-      const detailsCollection = database.collection('details')
+      const database = client.db('jerin_parlor');
+      const addServiceCollection = database.collection('services');
+      const detailsCollection = database.collection('details');
+      const reviewCollection = database.collection('review');
       //services GET
       app.get('/services', async(req, res)=>{
           const coursor = addServiceCollection.find({});
@@ -35,6 +36,33 @@ async function run() {
             // console.log(result);
             res.json(result)
             // res.send('post hitted')
+      })
+      //GET Single service Load
+      app.get('/services/:id', async(req, res)=>{
+        const id = req.params.id;
+        console.log('get load single service', id);
+        const query = {_id: ObjectId(id)};
+        const service = await addServiceCollection.findOne(query);
+        res.json(service);
+      })
+      // DELETE-API
+      app.delete('/services/:id', async(req, res)=>{
+        const id = req.params.id;
+        const query = {_id: ObjectId(id) };
+        const result = await addServiceCollection.deleteOne(query);
+        res.json(result);
+      })
+    //   Review-GET
+  app.get('/review', async(req, res)=>{
+    const cursor = reviewCollection.find({})
+    const result = await cursor.toArray()
+    res.send(result);
+      })
+      //Review-POST
+      app.post('/review', async(req, res)=>{
+        const result = await reviewCollection.insertOne(req.body);
+        // (console.log(result))
+        res.send(result);
       })
   
       app.get('/details/:id', async(req, res)=>{
