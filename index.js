@@ -22,6 +22,7 @@ async function run() {
       const addServiceCollection = database.collection('services');
       const detailsCollection = database.collection('details');
       const reviewCollection = database.collection('review');
+      const bookingCollection = database.collection('booking');
       //services GET
       app.get('/services', async(req, res)=>{
           const coursor = addServiceCollection.find({});
@@ -64,23 +65,33 @@ async function run() {
         // (console.log(result))
         res.send(result);
       })
-  
+  // id-deye-service-choose //DETAILS GET
       app.get('/details/:id', async(req, res)=>{
           console.log(req.params.id)
           const result = await detailsCollection
           .find({_id: ObjectId(req.params.id) })
           .toArray();
           console.log(result)
-
-            // console.log(req.params.id)
-            // const id = req.params.id;
-            // const query = { _id: ObjectId(id) };
-            // const tutor = await detailsCollection.findOne(query);
-            // console.log(tutor)
-            // res.send(tutor);
-
       })
-      //DETAILS POST
+         //BOOKING_sERVICE_GET
+         app.get('/booking', async(req, res) =>{
+           const email = req.query.email;
+           const query = { email: email }
+           console.log(query);
+           const cursor = bookingCollection.find(query);
+           const booking = await cursor.toArray();
+           res.json(booking);
+         })
+      //BOOKING_sERVICE_POST
+      app.post('/booking', async(req, res)=>{
+        const cards = req.body;
+        // console.log(cards);
+        // res.json({ message: 'hello' })
+        const result = await bookingCollection.insertOne(cards);
+        // console.log(result);
+       
+        res.json(result);
+      })
       
     } finally {
         //   await client.close();
