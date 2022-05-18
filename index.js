@@ -50,7 +50,8 @@ async function run() {
       app.delete('/services/:id', async(req, res)=>{
         const id = req.params.id;
         const query = {_id: ObjectId(id) };
-        const result = await addServiceCollection.deleteOne(query);
+        const result = await bookingCollection.deleteOne(query);
+        // console.log('deleted product',)
         res.json(result);
       })
     //   Review-GET
