@@ -46,6 +46,13 @@ async function run() {
         const service = await addServiceCollection.findOne(query);
         res.json(service);
       })
+      //PAY_SINGLE_SERVICE_LOAD
+      app.get('/booking/:id', async (req, res)=>{
+        const id = req.params.id;
+        const query = {_id: ObjectId(id)};
+        const result = await bookingCollection.findOne(query);
+        res.json(result);
+      })
       // DELETE-API
       app.delete('/services/:id', async(req, res)=>{
         const id = req.params.id;
