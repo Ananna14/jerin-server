@@ -1,8 +1,9 @@
 const express = require('express')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, Long } = require('mongodb');
 const cors = require('cors');
 const ObjectId = require("mongodb").ObjectId;
 require('dotenv').config()
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 const app = express();
 const port =process.env.PORT || 5000;
@@ -79,7 +80,7 @@ async function run() {
           const result = await detailsCollection
           .find({_id: ObjectId(req.params.id) })
           .toArray();
-          console.log(result)
+          // console.log(result)
       })
          //BOOKING_sERVICE_GET
          app.get('/booking', async(req, res) =>{
@@ -100,6 +101,36 @@ async function run() {
        
         res.json(result);
       })
+      //UPDATE-user
+      app.put('/booking/:id', async(req, res)=>{
+        const id = req.params.id;
+        const payment = req.body;
+        const filter = {_id: ObjectId(id)};
+        const updateDoc = {
+          $set: {
+            payment: payment
+          }
+        };
+        const result = await bookingCollection.updateOne(filter, updateDoc);
+        res.json(result);
+      })
+      // Payment 2nd-step
+      app.post('/create-payment-intent', async(req, res)=>{
+        const paymentInfo = req.body;
+        const amount = paymentInfo.price * 100;
+        const paymentIntent = await stripe.paymentIntents.create({
+             currency: 'usd',
+             amount: amount,
+             payment_method_types: ['card']
+        });
+        res.json({ clientSecret: paymentIntent.client_secret})
+      })
+      
+      // try{
+      //   console.log(error);
+      // } catch (error) {
+      //   console.log(error);
+      // }
       
     } finally {
         //   await client.close();
