@@ -28,7 +28,7 @@ async function run() {
       app.get('/services', async(req, res)=>{
           const coursor = addServiceCollection.find({});
           const service = await coursor.toArray();
-         res.send(service);
+         res.send({data:service});
         })
         //services  POST
         app.post('/services', async(req, res)=>{
@@ -36,7 +36,7 @@ async function run() {
             // console.log('hit the post');
             const result = await addServiceCollection.insertOne(service);
             // console.log(result);
-            res.json(result)
+            res.send(result)
             // res.send('post hitted')
       })
       //GET Single service Load
