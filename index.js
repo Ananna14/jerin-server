@@ -66,7 +66,7 @@ async function run() {
   app.get('/review', async(req, res)=>{
     const cursor = reviewCollection.find({})
     const result = await cursor.toArray()
-    res.send(result);
+    res.send({data:result});
       })
       //Review-POST
       app.post('/review', async(req, res)=>{
